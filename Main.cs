@@ -15,6 +15,7 @@ namespace MyPresto
         public static string Filename = "BlockedItems.json";
         private readonly EventsTriggers Events;
         public static List<int> BlockedItems = new List<int>();
+        public static List<PlayerInfo> PlayerInfos { get; set; } = new List<PlayerInfo>();
 
         public Main(IGameAPI api): base(api)
         {
