@@ -15,19 +15,19 @@ namespace MyPresto
             foreach (int i in Main.BlockedItems)
             {
                 Item item = Nova.man.item.GetItem(i);
-                panel.AddTabLine($"{item.itemName}", $"<color={PanelManager.Colors[NotificationManager.Type.Error]}>Bloqué</color>", Utils.getIconId(i), ui =>
+                panel.AddTabLine($"{item.itemName}", $"<color={PanelManager.Colors[NotificationManager.Type.Error]}>Bloqué</color>", Utils.GetIconId(i), ui =>
                 {
                     Main.BlockedItems.Remove(i);
+
+                    Utils.SaveBlockedItem();
+
+                    Open(player);
+                    PanelManager.NextPanel(player, ui, () => Open(player));
                 });
             }
 
             panel.AddButton("Ajouter", ui => PanelManager.NextPanel(player, ui, () => AddBlockedItem(player)));
-            panel.AddButton("Supprimer", ui =>
-            {
-                ui.SelectTab();
-                Open(player);
-                PanelManager.NextPanel(player, ui, () => Open(player));
-            });
+            panel.AddButton("Supprimer", ui => ui.SelectTab());
             panel.AddButton("Fermer", ui => PanelManager.Quit(ui, player));
 
             player.ShowPanelUI(panel);
@@ -43,13 +43,20 @@ namespace MyPresto
             {
                 if (int.TryParse(ui.inputText, out int id))
                 {
-                    Item item = Nova.man.item.GetItem(id);
-                    if (item != null)
+                    if (!Main.BlockedItems.Contains(id))
                     {
-                        Main.BlockedItems.Add(id);
-                        PanelManager.NextPanel(player, ui, () => Open(player));
+                        Item item = Nova.man.item.GetItem(id);
+                        if (item != null)
+                        {
+                            Main.BlockedItems.Add(id);
+
+                            Utils.SaveBlockedItem();
+
+                            PanelManager.NextPanel(player, ui, () => Open(player));
+                        }
+                        else PanelManager.Notification(player, "Erreur", "Aucun objet ne correspond à cette identifiant", NotificationManager.Type.Error);
                     }
-                    else PanelManager.Notification(player, "Erreur", "Aucun objet ne correspond à cette identifiant", NotificationManager.Type.Error);
+                    else PanelManager.Notification(player, "Erreur", "Vous avez déjà bloqué cette objet.", NotificationManager.Type.Error);
                 }
                 else PanelManager.Notification(player, "Erreur", "Veuillez renseigner l'indentifiant de l'objet que vous souhaitez bloquer.", NotificationManager.Type.Error);
             });

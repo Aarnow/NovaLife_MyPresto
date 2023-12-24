@@ -2,7 +2,6 @@
 using UnityEngine;
 using MyEvents;
 using System.Linq;
-using Life.VehicleSystem;
 using UIPanelManager;
 using System;
 
